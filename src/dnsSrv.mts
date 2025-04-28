@@ -1,6 +1,7 @@
 import {resolveSrv, type SrvRecord} from 'dns';
 import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 
+
 /**
  * Resolves the SRV records for the given service name.
  * @param {string} srv The service name to resolve.
@@ -14,17 +15,17 @@ import {Err, type IResult, Ok} from '@luolapeikko/result-option';
  * }
  */
 export function srvRecordsResult(srv: string): Promise<IResult<[SrvRecord, ...SrvRecord[]], NodeJS.ErrnoException>> {
-	return new Promise((resolve) => {
-		resolveSrv(srv, (error, result) => {
-			if (error) {
-				resolve(Err(error));
-			} else if (data.length === 0) {
-				resolve(Err(new Error('Expected at least one element, got none')))
-			} else {
-				resolve(Ok(result));
-			}
-		});
-	});
+    return new Promise((resolve) => {
+        resolveSrv(srv, (error, result) => {
+            if (error) {
+                resolve(Err(error));
+            } else if (result.length === 0) {
+                resolve(Err(new Error('Expected at least one element, got none')));
+            } else {
+                resolve(Ok(result as [SrvRecord, ...SrvRecord[]]));
+            }
+        });
+    });
 }
 
 /**
