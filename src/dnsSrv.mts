@@ -1,12 +1,6 @@
 import {resolveSrv, type SrvRecord} from 'dns';
 import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 
-function assertAtLeastOne<T>(data: T[]): asserts data is [T, ...T[]] {
-	if (data.length === 0) {
-		throw new Error('Expected at least one element, got none');
-	}
-}
-
 /**
  * Resolves the SRV records for the given service name.
  * @param {string} srv The service name to resolve.
@@ -24,8 +18,9 @@ export function srvRecordsResult(srv: string): Promise<IResult<[SrvRecord, ...Sr
 		resolveSrv(srv, (error, result) => {
 			if (error) {
 				resolve(Err(error));
+			} else if (data.length === 0) {
+				resolve(Err(new Error('Expected at least one element, got none')))
 			} else {
-				assertAtLeastOne(result); // This is safe because resolveSrv will always return at least one element
 				resolve(Ok(result));
 			}
 		});
